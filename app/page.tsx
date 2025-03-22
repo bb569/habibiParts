@@ -5,7 +5,7 @@ import Link from "next/link";
 const Home: NextPage = () => {
   return (
       <div className="container mx-auto px-4 py-8">
-        <h1>http://localhost:8000/datas</h1>
+
       {/* بخش بنر */}
       <section className="mb-8">
         <div className="bg-gray-200 rounded-lg p-8">
