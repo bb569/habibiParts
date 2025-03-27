@@ -9,6 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.49.3",
+>>>>>>> local-backup
     "axios": "^1.8.4",
     "json-server": "^1.0.0-beta.3",
     "next": "15.1.6",
@@ -21,6 +27,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+<<<<<<< HEAD
+=======
+    "encoding": "^0.1.13",
+>>>>>>> local-backup
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8",

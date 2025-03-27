@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // "use client";
 // import { createContext, useContext, useState } from "react";
 // type context = {
@@ -73,6 +74,9 @@
 //     </UserContext.Provider>
 //   );
 // }
+=======
+
+>>>>>>> local-backup
 "use client";
 import { createContext, useContext, useState } from "react";
 

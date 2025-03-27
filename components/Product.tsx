@@ -2,7 +2,11 @@ import { fronNumber } from "@/app/utils/number";
 
 export interface DataType {
   data2: string;
+<<<<<<< HEAD
   id: string;
+=======
+  id: string ;
+>>>>>>> local-backup
   imag: string;
   title: string;
   model: string;
