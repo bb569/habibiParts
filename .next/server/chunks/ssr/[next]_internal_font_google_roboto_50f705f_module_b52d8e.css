@@ -1,7 +1,5 @@
 /* [next]/internal/font/google/roboto_50f705f.module.css [app-client] (css) */
 @font-face {
-<<<<<<< HEAD
-=======
   font-family: Roboto;
   font-style: normal;
   font-weight: 700;
@@ -92,7 +90,6 @@
 }
 
 @font-face {
->>>>>>> local-backup
   font-family: Roboto Fallback;
   src: local(Arial);
   ascent-override: 92.98%;

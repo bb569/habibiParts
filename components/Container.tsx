@@ -1,12 +1,9 @@
-interface myChildren {
-    children: React.ReactNode
-}
-function Container({children}:myChildren) {
-  return (
-    <div className='container mx-auto'>
-      {children}
-    </div>
-  )
+interface ContainerProps {
+  children: React.ReactNode;
 }
 
-export default Container
+function Container({ children }: ContainerProps) {
+  return <div className="container mx-auto">{children}</div>;
+}
+
+export default Container;

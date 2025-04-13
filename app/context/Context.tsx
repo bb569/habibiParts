@@ -1,96 +1,17 @@
-<<<<<<< HEAD
-// "use client";
-// import { createContext, useContext, useState } from "react";
-// type context = {
-//   children: React.ReactNode;
-// };
-// type items = {
-//   id: number;
-//   qty: number;
-// };
-// type CartItems = {
-//   cartItems: items[];
-//   handleQty: (id: number) => void;
-//   deHandleQty: (id: number) => void;
-//   getQty: (id: number) => number;
-//   cartQty: number;
-//   allDelet: (id: number) => void;
-// };
-// const UserContext = createContext({} as CartItems);
-// export const FunContext = () => {
-//   return useContext(UserContext);
-// };
-// export default function CreatContext({ children }: context) {
-//   let [cartItems, setcartItems] = useState<items[]>([]);
-//   const getQty = (id: number) => {
-//     return cartItems.find((item) => item.id == id)?.qty || 0;
-//   };
-//   const cartQty = cartItems.reduce((total, item) => {
-//     return total + item.qty;
-//   }, 0);
-//   const handleQty = (id: number) => {
-//     setcartItems((curntItem) => {
-//       const isProduct = curntItem.find((item) => item.id == id) == null;
-//       if (isProduct) {
-//         return [...curntItem, { id: id, qty: 1 }];
-//       } else {
-//         return curntItem.map((item) => {
-//           if (item.id == id) {
-//             return { ...item, qty: item.qty + 1 };
-//           } else {
-//             return item;
-//           }
-//         });
-//       }
-//     });
-//   };
-//   const deHandleQty = (id: number) => {
-//     setcartItems((curntItem) => {
-//       let isProduct = curntItem.find((item) => item.id == id)?.qty == 1;
-//       if (isProduct) {
-//         return curntItem.filter((item) => item.id != id);
-//       } else {
-//         return curntItem.map((item) => {
-//           if (item.id == id) {
-//             return { ...item, qty: item.qty - 1 };
-//           } else {
-//             return item;
-//           }
-//         });
-//       }
-//     });
-//   };
-//   const allDelet = (id: number) => {
-//     setcartItems((curntItem) => {
-//       return curntItem.filter((item) => item.id != id);
-//     });
-//   };
-
-//   return (
-//     <UserContext.Provider
-//       value={{ cartItems, handleQty, deHandleQty, getQty, allDelet, cartQty }}
-//     >
-//       {children}
-//     </UserContext.Provider>
-//   );
-// }
-=======
-
->>>>>>> local-backup
 "use client";
 import { createContext, useContext, useState } from "react";
 
-type context = {
+type CartProviderProps = {
   children: React.ReactNode;
 };
 
-type items = {
+export type CartItem = { // اصلاح: اضافه کردن export
   id: number;
   qty: number;
 };
 
-type CartItems = {
-  cartItems: items[];
+type CartContextType = {
+  cartItems: CartItem[];
   handleQty: (id: number) => void;
   deHandleQty: (id: number) => void;
   getQty: (id: number) => number;
@@ -98,68 +19,65 @@ type CartItems = {
   allDelet: (id: number) => void;
 };
 
-const UserContext = createContext({} as CartItems);
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const FunContext = () => {
-  return useContext(UserContext);
+export const FunContext = () => { // اصلاح: تغییر نام هوک به FunContext
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error("FunContext must be used within a CartProvider"); // اصلاح پیام خطا
+  }
+  return context;
 };
 
-export default function CreatContext({ children }: context) {
-  const [cartItems, setcartItems] = useState<items[]>([]);
+export default function CartProvider({ children }: CartProviderProps) {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const getQty = (id: number) => {
-    return cartItems.find((item) => item.id == id)?.qty || 0;
+    return cartItems.find((item) => item.id === id)?.qty || 0;
   };
 
-  const cartQty = cartItems.reduce((total, item) => {
-    return total + item.qty;
-  }, 0);
+  const cartQty = cartItems.reduce((total, item) => total + item.qty, 0);
 
   const handleQty = (id: number) => {
-    setcartItems((curntItem) => {
-      const isProduct = curntItem.find((item) => item.id == id) == null;
-      if (isProduct) {
-        return [...curntItem, { id: id, qty: 1 }];
+    setCartItems((currentItems) => {
+      const existingItem = currentItems.find((item) => item.id === id);
+      if (!existingItem) {
+        return [...currentItems, { id, qty: 1 }];
       } else {
-        return curntItem.map((item) => {
-          if (item.id == id) {
-            return { ...item, qty: item.qty + 1 };
-          } else {
-            return item;
-          }
-        });
+        return currentItems.map((item) =>
+          item.id === id ? { ...item, qty: item.qty + 1 } : item
+        );
       }
     });
   };
 
   const deHandleQty = (id: number) => {
-    setcartItems((curntItem) => {
-      const isProduct = curntItem.find((item) => item.id == id)?.qty == 1;
-      if (isProduct) {
-        return curntItem.filter((item) => item.id != id);
+    setCartItems((currentItems) => {
+      const existingItem = currentItems.find((item) => item.id === id);
+      if (existingItem?.qty === 1) {
+        return currentItems.filter((item) => item.id !== id);
       } else {
-        return curntItem.map((item) => {
-          if (item.id == id) {
-            return { ...item, qty: item.qty - 1 };
-          } else {
-            return item;
-          }
-        });
+        return currentItems.map((item) =>
+          item.id === id ? { ...item, qty: item.qty - 1 } : item
+        );
       }
     });
   };
 
   const allDelet = (id: number) => {
-    setcartItems((curntItem) => {
-      return curntItem.filter((item) => item.id != id);
-    });
+    setCartItems((currentItems) =>
+      currentItems.filter((item) => item.id !== id)
+    );
   };
 
-  return (
-    <UserContext.Provider
-      value={{ cartItems, handleQty, deHandleQty, getQty, allDelet, cartQty }}
-    >
-      {children}
-    </UserContext.Provider>
-  );
+  const value: CartContextType = {
+    cartItems,
+    handleQty,
+    deHandleQty,
+    getQty,
+    allDelet,
+    cartQty,
+  };
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

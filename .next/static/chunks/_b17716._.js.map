@@ -1,9 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/LENOVO/Desktop/habibiParts-main/components/Container.tsx"],"sourcesContent":["interface myChildren {\n    children: React.ReactNode\n}\nfunction Container({children}:myChildren) {\n  return (\n    <div className='container mx-auto'>\n      {children}\n    </div>\n  )\n}\n\nexport default Container"],"names":[],"mappings":";;;;;AAGA,SAAS,UAAU,EAAC,QAAQ,EAAY;IACtC,qBACE,6LAAC;QAAI,WAAU;kBACZ;;;;;;AAGP;KANS;uCAQM"}},
-    {"offset": {"line": 29, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}},
-    {"offset": {"line": 35, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/LENOVO/Desktop/habibiParts-main/app/utils/number.ts"],"sourcesContent":["export function fronNumber(number:number){\n    return number.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')\n}"],"names":[],"mappings":";;;AAAO,SAAS,WAAW,MAAa;IACpC,OAAO,OAAO,QAAQ,GAAG,OAAO,CAAC,yBAAwB;AAC7D"}},
-    {"offset": {"line": 44, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

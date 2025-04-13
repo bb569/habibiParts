@@ -3,13 +3,10 @@
     "[project]/app/page": [
       "static/media/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAr0klQmz24-s.p.abc0f540.woff2"
     ],
-    "[project]/app/store/[id]/page": [
+    "[project]/app/store/page": [
       "static/media/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAr0klQmz24-s.p.abc0f540.woff2"
     ],
     "[project]/app/_not-found/page": [
-      "static/media/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAr0klQmz24-s.p.abc0f540.woff2"
-    ],
-    "[project]/app/cart/page": [
       "static/media/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAr0klQmz24-s.p.abc0f540.woff2"
     ]
   },

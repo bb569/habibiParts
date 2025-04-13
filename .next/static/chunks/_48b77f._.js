@@ -1,14 +1,99 @@
 (globalThis.TURBOPACK = globalThis.TURBOPACK || []).push(["static/chunks/_48b77f._.js", {
 
-"[project]/app/context/Context.tsx [app-client] (ecmascript)": (function(__turbopack_context__) {
+"[project]/app/context/Context.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
+"use strict";
 
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, k: __turbopack_refresh__, m: module, e: exports, t: __turbopack_require_real__ } = __turbopack_context__;
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, k: __turbopack_refresh__, m: module, z: __turbopack_require_stub__ } = __turbopack_context__;
 {
-const e = new Error(`Could not parse module '[project]/app/context/Context.tsx'
-
-Merge conflict marker encountered.`);
-e.code = 'MODULE_UNPARSEABLE';
-throw e;}}),
+__turbopack_esm__({
+    "FunContext": (()=>FunContext),
+    "default": (()=>CartProvider)
+});
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+;
+var _s = __turbopack_refresh__.signature(), _s1 = __turbopack_refresh__.signature();
+"use client";
+;
+const CartContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createContext"])(undefined);
+const FunContext = ()=>{
+    _s();
+    const context = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useContext"])(CartContext);
+    if (!context) {
+        throw new Error("FunContext must be used within a CartProvider"); // اصلاح پیام خطا
+    }
+    return context;
+};
+_s(FunContext, "b9L3QQ+jgeyIrH0NfHrJ8nn7VMU=");
+_c = FunContext;
+function CartProvider({ children }) {
+    _s1();
+    const [cartItems, setCartItems] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const getQty = (id)=>{
+        return cartItems.find((item)=>item.id === id)?.qty || 0;
+    };
+    const cartQty = cartItems.reduce((total, item)=>total + item.qty, 0);
+    const handleQty = (id)=>{
+        setCartItems((currentItems)=>{
+            const existingItem = currentItems.find((item)=>item.id === id);
+            if (!existingItem) {
+                return [
+                    ...currentItems,
+                    {
+                        id,
+                        qty: 1
+                    }
+                ];
+            } else {
+                return currentItems.map((item)=>item.id === id ? {
+                        ...item,
+                        qty: item.qty + 1
+                    } : item);
+            }
+        });
+    };
+    const deHandleQty = (id)=>{
+        setCartItems((currentItems)=>{
+            const existingItem = currentItems.find((item)=>item.id === id);
+            if (existingItem?.qty === 1) {
+                return currentItems.filter((item)=>item.id !== id);
+            } else {
+                return currentItems.map((item)=>item.id === id ? {
+                        ...item,
+                        qty: item.qty - 1
+                    } : item);
+            }
+        });
+    };
+    const allDelet = (id)=>{
+        setCartItems((currentItems)=>currentItems.filter((item)=>item.id !== id));
+    };
+    const value = {
+        cartItems,
+        handleQty,
+        deHandleQty,
+        getQty,
+        allDelet,
+        cartQty
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(CartContext.Provider, {
+        value: value,
+        children: children
+    }, void 0, false, {
+        fileName: "[project]/app/context/Context.tsx",
+        lineNumber: 82,
+        columnNumber: 10
+    }, this);
+}
+_s1(CartProvider, "jeyeRm/hZ/3zvXF4PAYTLSHDNRs=");
+_c1 = CartProvider;
+var _c, _c1;
+__turbopack_refresh__.register(_c, "FunContext");
+__turbopack_refresh__.register(_c1, "CartProvider");
+if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
+    __turbopack_refresh__.registerExports(module, globalThis.$RefreshHelpers$);
+}
+}}),
 "[project]/components/Nav.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
 
