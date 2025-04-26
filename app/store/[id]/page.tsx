@@ -1,14 +1,29 @@
-import React from 'react';
+import { Metadata } from 'next';
+import ProductDetailClient from '../ProductDetailClient';
 
-interface PageProps {
-  params: Promise<{ id: string }>;
+// تایپ جدید برای PageProps با در نظر گرفتن async بودن params
+export type PageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const resolvedParams = await params; // اطمینان از resolved شدن params
+  return {
+    title: `محصول ${resolvedParams.id}`,
+  };
 }
 
 export default async function Page({ params }: PageProps) {
-  const { id } = await params;
+  const resolvedParams = await params;  // اطمینان از resolved شدن params
+  const { id } = resolvedParams;
+
   return (
-    <div>
-      <h1>Product ID: {id}</h1>
+    <div className="container mx-auto p-4">
+      <ProductDetailClient params={{ productId: id }} />
     </div>
   );
 }

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/LENOVO/Desktop/allProject/habibiParts-main/app/store/%5Bid%5D/page.tsx"],"sourcesContent":["// app/store/[id]/page.tsx\r\n'use client' // اگر از هوک‌ها یا state استفاده می‌کنید\r\n\r\nimport Prd from '@/components/Prd'\r\n\r\n// راه‌حل طلایی: استفاده از انواع پیش‌فرض Next.js\r\nexport default function Page({ \r\n  params \r\n}: { \r\n  params: { \r\n    id: string \r\n  } \r\n}) {\r\n  return (\r\n    <div>\r\n      <Prd productId={params.id} />\r\n    </div>\r\n  )\r\n}"],"names":[],"mappings":"AAAA,0BAA0B;;;;;;;;;;AAC1B,aAAa,yCAAyC;;;;AAKvC,SAAS,KAAK,EAC3B,MAAM,EAKP;IACC,qBACE,8OAAC;kBACC,cAAA,8OAAC;YAAI,WAAW,OAAO,EAAE;;;;;;;;;;;AAG/B"}},
+    {"offset": {"line": 36, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

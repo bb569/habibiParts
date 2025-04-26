@@ -9,13 +9,13 @@ import { useState, useEffect } from 'react';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 interface ProductDetailClientProps {
-  productId: string;
+  params: {
+    productId: string;
+  };
 }
 
-export default function ProductDetailClient({ productId }: ProductDetailClientProps) {
-  
-  
-  
+export default function ProductDetailClient({ params }: ProductDetailClientProps) {
+  const { productId } = params;
   const [product, setProduct] = useState<DataType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -110,13 +110,7 @@ export default function ProductDetailClient({ productId }: ProductDetailClientPr
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-3">توضیحات محصول</h2>
             <p className="text-gray-700 leading-relaxed">
-              در ابتدا اسپویلر {product.title} یا همان بال {product.title}، برای خودروهای مسابقه‌ای و
-              اسپرتی استفاده می‌شد، اما در گذر زمان به دلیل تاثیر آیرودینامیکی و
-              زیبایی آن، برای اکثر خودروها نیز تولید شد. اسپویلر {product.title} {product.model} طرح RC
-              نیز که از مواد درجه یک فایبرگلاس ساخته شده، به عنوان یک آپشن ویژه
-              به {product.model} اضافه می‌شود. البته این بال {product.title} روی 207 نیز قابل نصب است.
-              این بال {product.title} بصورت خاص برای بدنه پژو {product.model} هاچ بک طراحی شده و کاملا
-              فیت با بدنه و بدون تاب خوردگی می‌باشد.
+              {/* توضیحات */}
             </p>
           </div>
 

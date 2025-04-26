@@ -1,62 +1,108 @@
-// app/store/page.tsx
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+"use client"
+import { createClient } from '@supabase/supabase-js'
 import { unstable_noStore as noStore } from 'next/cache'
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export default async function StorePage() {
-  noStore()
-  
-  try {
-    const cookieStore = cookies()
-    const supabase = createServerComponentClient({ cookies: () => cookieStore })
+// Define TypeScript interface for Product
+interface Product {
+  id: string
+  title: string
+  price: number
+  imag?: string | null
+}
 
-    // 1. ابتدا ساختار جدول را بررسی کنید
-    const { data: columns, error: columnsError } = await supabase
-      .rpc('get_table_columns', { table_name: 'Habibi' })
+export default function StorePage() {
+  const [isClient, setIsClient] = useState(false)
+  const [products, setProducts] = useState<Product[]>([]) // Use Product interface
+  const [error, setError] = useState<string | null>(null)
 
-    if (columnsError) {
-      console.error('Columns check failed:', columnsError)
-    } else {
-      console.log('Available columns:', columns)
-    }
+  useEffect(() => {
+    setIsClient(true)
+    fetchProducts()
+  }, [])
 
-    // 2. کوئری اصلی با ستون‌های موجود
-    const { data: products, error } = await supabase
-      .from('Habibi')
-      .select('id, title, price, description, imag')
-      //.order('created_at', { ascending: false }) // این خط را حذف یا اصلاح کنید
-      .order('id', { ascending: false }) // استفاده از ستون موجود مانند id
-
-    if (error) throw error
-
-    return (
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">محصولات</h1>
-        {products && products.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {products.map(product => (
-              <div key={product.id} className="border p-4 rounded-lg">
-                <h2 className="font-semibold">{product.title}</h2>
-                <p className="text-gray-600">
-                  {product.price?.toLocaleString('fa-IR')} تومان
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-center py-8">هیچ محصولی یافت نشد</p>
-        )}
-      </div>
+  async function fetchProducts() {
+    noStore()
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
-  } catch (err) {
-    console.error('Detailed Error:', JSON.stringify(err, null, 2))
+
+    try {
+      const { data, error: queryError } = await supabase
+        .from('Habibi')
+        .select('id, title, price, imag')
+        .limit(10)
+        .order('id', { ascending: false })
+
+      if (queryError) throw queryError
+      
+      setProducts(data || [])
+    } catch (err) {
+      const error = err as Error
+      console.error('Full error details:', error)
+      setError(error.message)
+    }
+  }
+
+  if (!isClient) {
+    return <div className="container mx-auto p-4">در حال بارگذاری...</div>
+  }
+
+  if (error) {
     return (
       <div className="container mx-auto p-4 text-red-500 text-center">
-        <h2 className="text-xl font-bold">خطا در بارگذاری محصولات</h2>
-        <p>لطفاً با پشتیبانی تماس بگیرید</p>
+        <h2 className="text-xl font-bold">خطا در سیستم</h2>
+        <p>{error}</p>
       </div>
     )
   }
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">محصولات</h1>
+      {products.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {products.map(product => (
+            <Link 
+              key={product.id}
+              href={`./store/${product.id}`}
+              passHref
+            >
+              <div className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <div className="relative h-48 w-full">
+                  {product.imag ? (
+                    <Image
+                      src={product.imag}
+                      alt={product.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      priority={false}
+                    />
+                  ) : (
+                    <div className="bg-gray-100 h-full w-full flex items-center justify-center">
+                      <span className="text-gray-400">بدون تصویر</span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h2 className="font-semibold text-lg mb-2">{product.title}</h2>
+                  <p className="text-gray-600">
+                    {product.price?.toLocaleString('fa-IR')} تومان
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center py-8">هیچ محصولی یافت نشد</p>
+      )}
+    </div>
+  )
 }
