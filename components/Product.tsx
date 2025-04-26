@@ -1,6 +1,7 @@
 import { fronNumber } from "@/app/utils/number";
 
 export interface DataType {
+  stock: string;
   data2: string;
 
   id: string | number;

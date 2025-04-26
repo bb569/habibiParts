@@ -76,19 +76,29 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$auth$2d$helpers$2d$nextjs$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/@supabase/auth-helpers-nextjs/dist/index.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$context$2f$Context$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/app/context/Context.tsx [app-ssr] (ecmascript)");
 "use client";
 ;
 ;
 ;
 ;
+;
 function ProductDetailClient({ params }) {
+    const { getQty, handleQty, deHandleQty } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$context$2f$Context$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FunContext"])();
     const [product, setProduct] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [quantity, setQuantity] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1);
+    const [cart, setCart] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$auth$2d$helpers$2d$nextjs$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createClientComponentClient"])();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         fetchProduct();
+        // بارگیری سبد خرید از localStorage هنگام لود صفحه
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+            setCart(JSON.parse(savedCart));
+        }
     }, [
         params.productId
     ]);
@@ -96,9 +106,7 @@ function ProductDetailClient({ params }) {
         try {
             setLoading(true);
             setError(null);
-            // 1. استفاده از نام صحیح جدول (Habibi)
-            const { data, error: supabaseError } = await supabase.from('Habibi') // تغییر به نام جدول شما
-            .select('*').eq('id', params.productId).single();
+            const { data, error: supabaseError } = await supabase.from('Habibi').select('*').eq('id', params.productId).single();
             if (supabaseError) {
                 throw new Error('خطا در دریافت اطلاعات از سرور: ' + supabaseError.message);
             }
@@ -113,11 +121,53 @@ function ProductDetailClient({ params }) {
             setLoading(false);
         }
     };
-    const [quantity, setQuantity] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1);
     const handleQuantityChange = (e)=>{
         const value = parseInt(e.target.value) || 1;
         setQuantity(Math.max(1, Math.min(10, value)));
     };
+    // افزودن یا افزایش محصول به سبد خرید
+    const addToCart = ()=>{
+        if (!product) return;
+        const existingItemIndex = cart.findIndex((item)=>item.id === product.id);
+        if (existingItemIndex >= 0) {
+            // اگر محصول در سبد وجود دارد، تعداد را افزایش می‌دهیم
+            const updatedCart = [
+                ...cart
+            ];
+            updatedCart[existingItemIndex].quantity += quantity;
+            setCart(updatedCart);
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+        } else {
+            // اگر محصول در سبد نیست، جدید اضافه می‌کنیم
+            const newItem = {
+                id: product.id,
+                title: product.title,
+                price: product.price,
+                quantity: quantity,
+                image: product.imag
+            };
+            const updatedCart = [
+                ...cart,
+                newItem
+            ];
+            setCart(updatedCart);
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+        }
+        alert(`${quantity} عدد ${product.title} به سبد خرید اضافه شد`);
+    };
+    // کاهش تعداد یک آیتم در سبد خرید
+    const decreaseQuantity = (id)=>{
+        const updatedCart = cart.map((item)=>{
+            if (item.id === id && item.quantity > 1) {
+                item.quantity--;
+            }
+            return item;
+        }).filter((item)=>item.quantity > 0); // حذف آیتم‌های با تعداد ۰
+        setCart(updatedCart);
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+    };
+    // محاسبه تعداد کل آیتم‌های سبد خرید
+    const totalCartItems = cart.reduce((total, item)=>total + item.quantity, 0);
     if (loading) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "p-4 text-center",
@@ -128,32 +178,32 @@ function ProductDetailClient({ params }) {
                         className: "w-full h-64 bg-gray-200 rounded"
                     }, void 0, false, {
                         fileName: "[project]/app/store/ProductDetailClient.tsx",
-                        lineNumber: 68,
+                        lineNumber: 130,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "w-3/4 h-6 bg-gray-200 rounded"
                     }, void 0, false, {
                         fileName: "[project]/app/store/ProductDetailClient.tsx",
-                        lineNumber: 69,
+                        lineNumber: 131,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "w-1/2 h-6 bg-gray-200 rounded"
                     }, void 0, false, {
                         fileName: "[project]/app/store/ProductDetailClient.tsx",
-                        lineNumber: 70,
+                        lineNumber: 132,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/store/ProductDetailClient.tsx",
-                lineNumber: 67,
+                lineNumber: 129,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/store/ProductDetailClient.tsx",
-            lineNumber: 66,
+            lineNumber: 128,
             columnNumber: 7
         }, this);
     }
@@ -166,7 +216,7 @@ function ProductDetailClient({ params }) {
                     children: error
                 }, void 0, false, {
                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                    lineNumber: 79,
+                    lineNumber: 141,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -175,13 +225,13 @@ function ProductDetailClient({ params }) {
                     children: "بازگشت به صفحه اصلی"
                 }, void 0, false, {
                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                    lineNumber: 82,
+                    lineNumber: 144,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/store/ProductDetailClient.tsx",
-            lineNumber: 78,
+            lineNumber: 140,
             columnNumber: 7
         }, this);
     }
@@ -191,7 +241,7 @@ function ProductDetailClient({ params }) {
             children: "محصولی یافت نشد"
         }, void 0, false, {
             fileName: "[project]/app/store/ProductDetailClient.tsx",
-            lineNumber: 93,
+            lineNumber: 155,
             columnNumber: 12
         }, this);
     }
@@ -212,19 +262,19 @@ function ProductDetailClient({ params }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/app/store/ProductDetailClient.tsx",
-                        lineNumber: 102,
+                        lineNumber: 164,
                         columnNumber: 13
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "w-full h-96 flex items-center justify-center bg-gray-100 text-gray-400",
                         children: "تصویری موجود نیست"
                     }, void 0, false, {
                         fileName: "[project]/app/store/ProductDetailClient.tsx",
-                        lineNumber: 112,
+                        lineNumber: 174,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                    lineNumber: 100,
+                    lineNumber: 162,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -236,7 +286,7 @@ function ProductDetailClient({ params }) {
                             children: product.title
                         }, void 0, false, {
                             fileName: "[project]/app/store/ProductDetailClient.tsx",
-                            lineNumber: 120,
+                            lineNumber: 182,
                             columnNumber: 11
                         }, this),
                         product.model && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -244,7 +294,7 @@ function ProductDetailClient({ params }) {
                             children: product.model
                         }, void 0, false, {
                             fileName: "[project]/app/store/ProductDetailClient.tsx",
-                            lineNumber: 121,
+                            lineNumber: 183,
                             columnNumber: 29
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -261,17 +311,17 @@ function ProductDetailClient({ params }) {
                                                 d: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                                lineNumber: 132,
+                                                lineNumber: 194,
                                                 columnNumber: 21
                                             }, this)
                                         }, i, false, {
                                             fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                            lineNumber: 127,
+                                            lineNumber: 189,
                                             columnNumber: 19
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                    lineNumber: 125,
+                                    lineNumber: 187,
                                     columnNumber: 15
                                 }, this),
                                 product.order && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -283,16 +333,15 @@ function ProductDetailClient({ params }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                    lineNumber: 138,
+                                    lineNumber: 200,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/store/ProductDetailClient.tsx",
-                            lineNumber: 123,
+                            lineNumber: 185,
                             columnNumber: 11
                         }, this),
-                        "catch",
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "py-4 border-t border-b border-gray-200",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -303,12 +352,12 @@ function ProductDetailClient({ params }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                lineNumber: 143,
+                                lineNumber: 205,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/store/ProductDetailClient.tsx",
-                            lineNumber: 142,
+                            lineNumber: 204,
                             columnNumber: 11
                         }, this),
                         product.description && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -319,7 +368,7 @@ function ProductDetailClient({ params }) {
                                     children: "توضیحات محصول"
                                 }, void 0, false, {
                                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                    lineNumber: 150,
+                                    lineNumber: 212,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -327,76 +376,72 @@ function ProductDetailClient({ params }) {
                                     children: product.description
                                 }, void 0, false, {
                                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                    lineNumber: 151,
+                                    lineNumber: 213,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/store/ProductDetailClient.tsx",
-                            lineNumber: 149,
+                            lineNumber: 211,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-200 gap-4",
+                            className: "flex items-center gap-2 mt-2",
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex items-center",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "ml-3 text-gray-700",
-                                            children: "تعداد:"
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                            lineNumber: 157,
-                                            columnNumber: 15
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                            type: "number",
-                                            min: "1",
-                                            max: "10",
-                                            value: quantity,
-                                            onChange: handleQuantityChange,
-                                            className: "w-16 px-2 py-1 border rounded text-center"
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                            lineNumber: 158,
-                                            columnNumber: 15
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                    lineNumber: 156,
-                                    columnNumber: 13
-                                }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    className: "px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors w-full sm:w-auto",
-                                    children: "افزودن به سبد خرید"
+                                    className: "w-6 h-6 bg-blue-500 rounded-sm text-white text-center",
+                                    onClick: (e)=>{
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleQty(Number(product.id));
+                                    },
+                                    children: "+"
                                 }, void 0, false, {
                                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                                    lineNumber: 167,
-                                    columnNumber: 13
+                                    lineNumber: 218,
+                                    columnNumber: 21
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    children: getQty(Number(product.id))
+                                }, void 0, false, {
+                                    fileName: "[project]/app/store/ProductDetailClient.tsx",
+                                    lineNumber: 228,
+                                    columnNumber: 21
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    className: "w-6 h-6 bg-red-500 rounded-sm text-white text-center",
+                                    onClick: (e)=>{
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        deHandleQty(Number(product.id));
+                                    },
+                                    children: "-"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/store/ProductDetailClient.tsx",
+                                    lineNumber: 229,
+                                    columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/store/ProductDetailClient.tsx",
-                            lineNumber: 155,
-                            columnNumber: 11
+                            lineNumber: 217,
+                            columnNumber: 1
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/store/ProductDetailClient.tsx",
-                    lineNumber: 119,
+                    lineNumber: 181,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/store/ProductDetailClient.tsx",
-            lineNumber: 98,
+            lineNumber: 160,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/store/ProductDetailClient.tsx",
-        lineNumber: 97,
+        lineNumber: 159,
         columnNumber: 5
     }, this);
 }

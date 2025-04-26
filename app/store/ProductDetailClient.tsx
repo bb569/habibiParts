@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from 'next/navigation';
+import { FunContext } from '../context/Context';
 
 interface Product {
   id: string;
@@ -13,18 +14,35 @@ interface Product {
   description?: string;
   stars: number;
   order?: number;
-  // سایر فیلدهای موجود در جدول Habibi
+}
+
+// تعریف نوع آیتم سبد خرید
+interface CartItem {
+  id: string;
+  title: string;
+  price: number;
+  quantity: number;
+  image: string;
 }
 
 export default function ProductDetailClient({ params }: { params: { productId: string } }) {
+    const { getQty, handleQty, deHandleQty } = FunContext();
+  
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [cart, setCart] = useState<CartItem[]>([]);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
   useEffect(() => {
     fetchProduct();
+    // بارگیری سبد خرید از localStorage هنگام لود صفحه
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
   }, [params.productId]);
 
   const fetchProduct = async () => {
@@ -32,9 +50,8 @@ export default function ProductDetailClient({ params }: { params: { productId: s
       setLoading(true);
       setError(null);
 
-      // 1. استفاده از نام صحیح جدول (Habibi)
       const { data, error: supabaseError } = await supabase
-        .from('Habibi') // تغییر به نام جدول شما
+        .from('Habibi')
         .select('*')
         .eq('id', params.productId)
         .single();
@@ -54,12 +71,57 @@ export default function ProductDetailClient({ params }: { params: { productId: s
     } finally {
       setLoading(false);
     }
-  };  const [quantity, setQuantity] = useState(1);
+  };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
     setQuantity(Math.max(1, Math.min(10, value)));
   };
+
+  // افزودن یا افزایش محصول به سبد خرید
+  const addToCart = () => {
+    if (!product) return;
+
+    const existingItemIndex = cart.findIndex(item => item.id === product.id);
+
+    if (existingItemIndex >= 0) {
+      // اگر محصول در سبد وجود دارد، تعداد را افزایش می‌دهیم
+      const updatedCart = [...cart];
+      updatedCart[existingItemIndex].quantity += quantity;
+      setCart(updatedCart);
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+    } else {
+      // اگر محصول در سبد نیست، جدید اضافه می‌کنیم
+      const newItem: CartItem = {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        quantity: quantity,
+        image: product.imag
+      };
+      const updatedCart = [...cart, newItem];
+      setCart(updatedCart);
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+    }
+
+    alert(`${quantity} عدد ${product.title} به سبد خرید اضافه شد`);
+  };
+
+  // کاهش تعداد یک آیتم در سبد خرید
+  const decreaseQuantity = (id: string) => {
+    const updatedCart = cart.map(item => {
+      if (item.id === id && item.quantity > 1) {
+        item.quantity--;
+      }
+      return item;
+    }).filter(item => item.quantity > 0); // حذف آیتم‌های با تعداد ۰
+
+    setCart(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
+
+  // محاسبه تعداد کل آیتم‌های سبد خرید
+  const totalCartItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   if (loading) {
     return (
@@ -119,7 +181,7 @@ export default function ProductDetailClient({ params }: { params: { productId: s
         <div dir="rtl" className="space-y-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{product.title}</h1>
           {product.model && <p className="text-lg text-gray-600 mt-2">{product.model}</p>}
-          
+
           <div className="flex items-center">
             {product.stars && (
               <div className="flex items-center text-yellow-400">
@@ -137,7 +199,7 @@ export default function ProductDetailClient({ params }: { params: { productId: s
             {product.order && (
               <span className="text-sm text-gray-500 mr-2">({product.order} سفارش)</span>
             )}
-          </div>catch
+          </div>
 
           <div className="py-4 border-t border-b border-gray-200">
             <div className="text-2xl font-semibold text-blue-600">
@@ -152,23 +214,32 @@ export default function ProductDetailClient({ params }: { params: { productId: s
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-200 gap-4">
-            <div className="flex items-center">
-              <span className="ml-3 text-gray-700">تعداد:</span>
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={quantity}
-                onChange={handleQuantityChange}
-                className="w-16 px-2 py-1 border rounded text-center"
-              />
-            </div>
-            <button className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors w-full sm:w-auto">
-              افزودن به سبد خرید
-            </button>
+<div className="flex items-center gap-2 mt-2">
+                    <button
+                      className="w-6 h-6 bg-blue-500 rounded-sm text-white text-center"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleQty(Number(product.id));
+                      }}
+                    >
+                      +
+                    </button>
+                    <span>{getQty(Number(product.id))}</span>
+                    <button
+                      className="w-6 h-6 bg-red-500 rounded-sm text-white text-center"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        deHandleQty(Number(product.id));
+                      }}
+                    >
+                      -
+                    </button>
+                  </div>
           </div>
         </div>
       </div>
-    </div>
-  );}
+  
+  );
+}

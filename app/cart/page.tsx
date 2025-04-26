@@ -1,93 +1,131 @@
 "use client";
-import { DataType } from "../../components/Product";
-import Container from "../../components/Container";
-import { useState, useEffect, useMemo } from "react";
-import { FunContext } from "../context/Context";
-import ShopingBasket from "@/components/ShopingBasket";
-import axios from "axios";
-import { fronNumber } from "../utils/number";
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+interface CartItem {
+  id: string;
+  title: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
 
 export default function Cart() {
-  const [products, setProducts] = useState<DataType[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [modelFilter, setModelFilter] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get<DataType[]>("http://localhost:8000/datas");
-        setProducts(response.data);
-      } catch (err) {
-        setError("خطا در دریافت داده‌ها");
-        console.error("Error fetching data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    // بارگذاری سبد خرید از localStorage
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
   }, []);
 
-  const availableModels = useMemo(
-    () => [...new Set(products.map((product) => product.model))],
-    [products]
-  );
+  // محاسبه مجموع قیمت سبد خرید
+  const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const { cartItems } = FunContext();
+  // حذف یک آیتم از سبد خرید
+  const removeFromCart = (id: string) => {
+    const updatedCart = cart.filter(item => item.id !== id);
+    setCart(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
 
-  const totalPrice = useMemo(() => {
-    return cartItems.reduce((total: number, item) => {
-      const product = products.find(
-        (product) => product.id.toString() === item.id.toString()
-      );
-      return total + (product?.price || 0) * item.qty;
-    }, 0);
-  }, [cartItems, products]);
+  // افزایش تعداد یک آیتم در سبد خرید
+  const increaseQuantity = (id: string) => {
+    const updatedCart = cart.map(item => {
+      if (item.id === id) {
+        item.quantity++;
+      }
+      return item;
+    });
+    setCart(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
 
-  if (loading) {
-    return <Container>در حال بارگذاری...</Container>;
-  }
+  // کاهش تعداد یک آیتم در سبد خرید
+  const decreaseQuantity = (id: string) => {
+    const updatedCart = cart.map(item => {
+      if (item.id === id && item.quantity > 1) {
+        item.quantity--;
+      }
+      return item;
+    }).filter(item => item.quantity > 0); // حذف آیتم‌هایی که تعدادشان به 0 رسید
+    setCart(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
 
-  if (error) {
-    return <Container>{error}</Container>;
+  // اگر سبد خرید خالی است
+  if (cart.length === 0) {
+    return (
+      <div className="p-4 text-center">
+        <h2 className="text-2xl font-semibold">سبد خرید شما خالی است</h2>
+        <button
+          onClick={() => router.push('/')}
+          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          ادامه خرید
+        </button>
+      </div>
+    );
   }
 
   return (
-    <Container>
-      <h4 className="py-5 text-d text-right">لوازم جانبی شاتون</h4>
-      <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/4 p-4">
-          <input
-            type="text"
-            placeholder="جستجو..."
-            className="border p-2 w-full mb-4"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select
-            className="border p-2 w-full"
-            value={modelFilter}
-            onChange={(e) => setModelFilter(e.target.value)}
-          >
-            <option value="">همه مدل‌ها</option>
-            {availableModels.map((model) => (
-              <option key={model} value={model}>
-                {model}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="md:w-3/4 grid lg:grid-cols-3 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-3 cursor-pointer">
-          {cartItems.map((item) => (
-            <ShopingBasket key={item.id.toString()} {...item} />
-          ))}
-        </div>
+    <div className="p-4 max-w-6xl mx-auto">
+      <h1 className="text-2xl font-semibold mb-6">سبد خرید شما</h1>
+      <div className="space-y-6">
+        {cart.map(item => (
+          <div key={item.id} className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center gap-4">
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-20 h-20 object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/placeholder-product.png';
+                }}
+              />
+              <div>
+                <h3 className="text-lg font-semibold">{item.title}</h3>
+                <p className="text-gray-600">تعداد: {item.quantity}</p>
+                <p className="text-sm text-gray-500">{item.price.toLocaleString('fa-IR')} تومان</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => decreaseQuantity(item.id)}
+                className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+              >
+                -
+              </button>
+              <button
+                onClick={() => increaseQuantity(item.id)}
+                className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+              >
+                +
+              </button>
+              <button
+                onClick={() => removeFromCart(item.id)}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                حذف
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
-      <div>
-        <p>قیمت کل: {fronNumber(totalPrice)}</p>
+      <div className="mt-6 flex justify-between items-center">
+        <h2 className="text-xl font-semibold">مجموع: {totalPrice.toLocaleString('fa-IR')} تومان</h2>
+        <button
+          onClick={() => router.push('/checkout')}
+          className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          ادامه به تسویه حساب
+        </button>
       </div>
-    </Container>
+    </div>
   );
 }

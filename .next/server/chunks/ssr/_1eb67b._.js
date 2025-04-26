@@ -52,12 +52,14 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$store$2f$ProductDetai
 ;
 ;
 async function generateMetadata({ params }) {
+    const resolvedParams = await params; // اطمینان از resolved شدن params
     return {
-        title: `محصول ${params.id}`
+        title: `محصول ${resolvedParams.id}`
     };
 }
 async function Page({ params }) {
-    const { id } = params;
+    const resolvedParams = await params; // اطمینان از resolved شدن params
+    const { id } = resolvedParams;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "container mx-auto p-4",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$store$2f$ProductDetailClient$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
@@ -66,12 +68,12 @@ async function Page({ params }) {
             }
         }, void 0, false, {
             fileName: "[project]/app/store/[id]/page.tsx",
-            lineNumber: 15,
+            lineNumber: 26,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/store/[id]/page.tsx",
-        lineNumber: 14,
+        lineNumber: 25,
         columnNumber: 5
     }, this);
 }
